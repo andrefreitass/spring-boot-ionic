@@ -2,7 +2,8 @@ package com.andre.cursomc.domain.enums;
 
 public enum TipoCliente {
 
-	PESSOAFISICA(0, "Pessoa Fisica"), PESSOAJURIDICA(1, "Pessoa Juridica");
+	PESSOAFISICA(0, "Pessoa Fisica"), 
+	PESSOAJURIDICA(1, "Pessoa Juridica");
 
 	private Integer codigo;
 	private String descricao;
