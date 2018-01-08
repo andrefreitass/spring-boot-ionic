@@ -13,8 +13,8 @@ public class CategoriaService {
 	@Autowired
 	private CategoriaRepository repo;
 
-	//Metodo para buscar dados 
-	public Categoria buscar(Integer id) {
+	// Metodo para buscar dados
+	public Categoria find(Integer id) {
 		Categoria obj = repo.findOne(id);
 		if (obj == null) {
 			throw new ObjectNotFoundException(
@@ -24,9 +24,16 @@ public class CategoriaService {
 		}
 
 	}
-	//Metodo para Insercao
+
+	// Metodo para Insercao
 	public Categoria insert(Categoria obj) {
 		obj.setId(null);
+		return repo.save(obj);
+	}
+
+	// Metodo para atualizacao
+	public Categoria update(Categoria obj) {
+		find(obj.getId());
 		return repo.save(obj);
 	}
 
