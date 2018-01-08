@@ -2,6 +2,8 @@ package com.andre.cursomc.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -10,30 +12,35 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 @Entity
-public class Pedido implements Serializable{
+public class Pedido implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)//Definindo geracao automatica dos IDs
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // Definindo geracao automatica dos IDs
 	private Integer id;
 	private Date instante;
 
 	// Criando Associacoes
-	@OneToOne(cascade=CascadeType.ALL, mappedBy="pedido")
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "pedido")
 	private Pagamento pagamento;
 
 	// Criando Associacoes
 	@ManyToOne
-	@JoinColumn(name="cliente_id")
+	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
 
 	// Criando Associacoes
 	@ManyToOne
-	@JoinColumn(name="endereco_entrega_id")
+	@JoinColumn(name = "endereco_entrega_id")
 	private Endereco enderecoEntrega;
+
+	// Criando associacao dos Itens Pedidos
+	@OneToMany(mappedBy="id.pedido")
+	private Set<ItemPedido> item = new HashSet<>();
 
 	// Construtores Padrao
 	public Pedido() {
@@ -44,7 +51,7 @@ public class Pedido implements Serializable{
 	public Pedido(Integer id, Date instante, Cliente cliente, Endereco enderecoEntrega) {
 		super();
 		this.id = id;
-		this.instante = instante;		
+		this.instante = instante;
 		this.cliente = cliente;
 		this.enderecoEntrega = enderecoEntrega;
 	}
@@ -88,6 +95,14 @@ public class Pedido implements Serializable{
 	public void setEnderecoEntrega(Endereco enderecoEntrega) {
 		this.enderecoEntrega = enderecoEntrega;
 	}
+	
+	public Set<ItemPedido> getItem() {
+		return item;
+	}
+
+	public void setItem(Set<ItemPedido> item) {
+		this.item = item;
+	}
 
 	@Override
 	public int hashCode() {
@@ -113,7 +128,5 @@ public class Pedido implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
 
 }
