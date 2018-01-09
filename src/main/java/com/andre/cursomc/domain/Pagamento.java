@@ -14,31 +14,31 @@ import com.andre.cursomc.domain.enums.EstadoPagamento;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-//Notacao para criacao de Heranca
-@Inheritance(strategy=InheritanceType.JOINED)
-public abstract class Pagamento implements Serializable{
+// Notacao para criacao de Heranca
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Pagamento implements Serializable {
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	private Integer id;
 	private Integer estado;
-	
-	//Criando Associacao com Pedido
+
+	// Criando Associacao com Pedido
 	@JsonIgnore
 	@OneToOne
-	@JoinColumn(name="pedido_id")
+	@JoinColumn(name = "pedido_id")
 	@MapsId
 	private Pedido pedido;
-	
-	//Construtor Padrao
-	public Pagamento() {		
+
+	// Construtor Padrao
+	public Pagamento() {
 	}
 
-	//Construtores Com Argumentos
+	// Construtores Com Argumentos
 	public Pagamento(Integer id, EstadoPagamento estado, Pedido pedido) {
 		super();
 		this.id = id;
-		this.estado = estado.getCodigo();
+		this.estado = (estado == null) ? null : estado.getCodigo();
 		this.pedido = pedido;
 	}
 
@@ -90,9 +90,5 @@ public abstract class Pagamento implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
-	
-	
 
 }

@@ -41,8 +41,9 @@ public class CategoriaService {
 
 	// Metodo para atualizacao
 	public Categoria update(Categoria obj) {
-		find(obj.getId());
-		return repo.save(obj);
+		Categoria novoObjeto = find(obj.getId());
+		updateObjeto(novoObjeto, obj);
+		return repo.save(novoObjeto);
 	}
 
 	// Metodo para Exclusao
@@ -57,7 +58,7 @@ public class CategoriaService {
 		}
 
 	}
-	
+
 	// Metodo para buscar Todos Dados
 	public List<Categoria> findAll() {
 		List<Categoria> lista = repo.findAll();
@@ -69,15 +70,22 @@ public class CategoriaService {
 		}
 
 	}
-	//Metodo para paginacao
-	public Page<Categoria> findPage(Integer page,Integer linesPerPage,String orderBy,String direction){
-		PageRequest pageRequest = new PageRequest(page, linesPerPage,Direction.valueOf(direction) , orderBy);
+
+	// Metodo para paginacao
+	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repo.findAll(pageRequest);
-		
+
 	}
-	//Converte DTO para Entity
+
+	// Converte DTO para Entity
 	public Categoria fromDTO(CategoriaDTO objDTO) {
-		return new Categoria(objDTO.getId(),objDTO.getNome());
+		return new Categoria(objDTO.getId(), objDTO.getNome());
 	}
-	
+
+	//
+	private void updateObjeto(Categoria novoObjeto, Categoria obj) {
+		novoObjeto.setNome(obj.getNome());
+	}
+
 }
