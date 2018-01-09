@@ -15,13 +15,13 @@ import com.andre.cursomc.repositories.ClienteRepository;
 import com.andre.cursomc.resources.exception.FieldMessage;
 import com.andre.cursomc.services.validation.utils.CpfCnpj;
 
-public class ClienteInsertValidator implements ConstraintValidator<ClienteValidator, ClienteNewDTO> {
+public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
 
 	@Autowired
 	private ClienteRepository repo;
 	
 	@Override
-	public void initialize(ClienteValidator ann) {
+	public void initialize(ClienteInsert ann) {
 	}
 
 	@Override
