@@ -1,10 +1,18 @@
 package com.andre.cursomc.services;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.andre.cursomc.domain.Cliente;
+import com.andre.cursomc.dto.ClienteDTO;
 import com.andre.cursomc.repositories.ClienteRepository;
+import com.andre.cursomc.services.exception.DataIntegrityException;
 import com.andre.cursomc.services.exception.ObjectNotFoundException;
 
 @Service
@@ -22,4 +30,54 @@ public class ClienteService {
 		}
 
 	}
-}
+	
+	// Metodo para atualizacao
+		public Cliente update(Cliente obj) {
+			Cliente novoObjeto = find(obj.getId());
+			updateObjeto(novoObjeto,obj);
+			return repo.save(novoObjeto);
+		}
+
+		// Metodo para Exclusao
+		public void delete(Integer id) {
+			find(id);
+			try {
+				repo.delete(id);
+
+			} catch (DataIntegrityViolationException e) {
+				throw new DataIntegrityException("Nao e possivel excluir um Cliente que possui Pedidos");
+
+			}
+
+		}
+		
+		// Metodo para buscar Todos Dados
+		public List<Cliente> findAll() {
+			List<Cliente> lista = repo.findAll();
+			if (lista == null) {
+				throw new ObjectNotFoundException(
+						"Objeto nao encontrado ID: " + findAll() + ", Tipo " + Cliente.class.getName());
+			} else {
+				return repo.findAll();
+			}
+
+		}
+		//Metodo para paginacao
+		public Page<Cliente> findPage(Integer page,Integer linesPerPage,String orderBy,String direction){
+			PageRequest pageRequest = new PageRequest(page, linesPerPage,Direction.valueOf(direction) , orderBy);
+			return repo.findAll(pageRequest);
+			
+		}
+		//Converte DTO para Entity
+		public Cliente fromDTO(ClienteDTO objDTO) {
+			return new Cliente(objDTO.getId(),objDTO.getNome(),objDTO.getEmail(),null,null);
+		}
+		
+		private void updateObjeto(Cliente novoObjeto, Cliente obj) {
+			novoObjeto.setNome(obj.getNome());
+			novoObjeto.setEmail(obj.getEmail());
+		}
+		
+	}
+
+
