@@ -29,7 +29,8 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 	//caminho apenas de leitura
 	private static final String[] ACESSO_LIBERADO_CONSULTA = {			
 			"/produtos/**", 
-			"/categorias/**" };
+			"/categorias/**",
+			"/clientes/**"};
 
 	// Coisas do frameWork
 	protected void configure(HttpSecurity http) throws Exception {
