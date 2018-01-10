@@ -26,7 +26,7 @@ public abstract class AbstractEmailService implements EmailService {
 		mensagem.setFrom(emailPadraoEnvio);
 		mensagem.setSubject("Pedido Confirmado! Codigo: " + pedido.getId());
 		mensagem.setSentDate(new Date(System.currentTimeMillis()));
-		mensagem.setText(pedido.toString());		
+		mensagem.setText(pedido.toString() + " \n" + " \n" + "PAGA O QUE VOCE ME DEVE");		
 		return mensagem;
 	}
 
