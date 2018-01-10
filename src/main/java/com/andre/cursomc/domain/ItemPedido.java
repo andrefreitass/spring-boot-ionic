@@ -1,6 +1,8 @@
 package com.andre.cursomc.domain;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -111,4 +113,22 @@ public class ItemPedido implements Serializable {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		NumberFormat numeroFormatado = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+		StringBuilder builder = new StringBuilder();
+		builder.append(getProduto().getNome());
+		builder.append(" , Quantidade: ");
+		builder.append(getQuantidade());
+		builder.append(" , Preco Unitario: ");
+		builder.append(numeroFormatado.format(getPreco()));
+		builder.append(" , Sub Total: ");
+		builder.append(numeroFormatado.format(getSubTotal()));
+		builder.append("\n");				
+		return builder.toString();
+	}
+	
+	
+
 }
+

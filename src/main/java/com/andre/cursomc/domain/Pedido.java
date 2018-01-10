@@ -1,8 +1,11 @@
 package com.andre.cursomc.domain;
 
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -24,15 +27,15 @@ public class Pedido implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // Definindo geracao automatica dos IDs
 	private Integer id;
-	
-	@JsonFormat(pattern="dd/MM/yyyy hh:mm")
+
+	@JsonFormat(pattern = "dd/MM/yyyy hh:mm")
 	private Date instante;
 
-	// Criando Associacoes	
+	// Criando Associacoes
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "pedido")
 	private Pagamento pagamento;
 
-	// Criando Associacoes	
+	// Criando Associacoes
 	@ManyToOne
 	@JoinColumn(name = "cliente_id")
 	private Cliente cliente;
@@ -43,7 +46,7 @@ public class Pedido implements Serializable {
 	private Endereco enderecoEntrega;
 
 	// Criando associacao dos Itens Pedidos
-	@OneToMany(mappedBy="id.pedido")
+	@OneToMany(mappedBy = "id.pedido")
 	private Set<ItemPedido> item = new HashSet<>();
 
 	// Construtores Padrao
@@ -59,7 +62,7 @@ public class Pedido implements Serializable {
 		this.cliente = cliente;
 		this.enderecoEntrega = enderecoEntrega;
 	}
-	
+
 	public Double getValorTotal() {
 		double soma = 0.0;
 		for (ItemPedido ip : item) {
@@ -107,7 +110,7 @@ public class Pedido implements Serializable {
 	public void setEnderecoEntrega(Endereco enderecoEntrega) {
 		this.enderecoEntrega = enderecoEntrega;
 	}
-	
+
 	public Set<ItemPedido> getItem() {
 		return item;
 	}
@@ -139,6 +142,29 @@ public class Pedido implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		NumberFormat numeroFormatado = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
+		SimpleDateFormat dataFormatada = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+		builder.append("Pedido Numero: ");
+		builder.append(getId());
+		builder.append(" , Data Hora Compra: ");
+		builder.append(dataFormatada.format(getInstante()));
+		builder.append(" , Cliente ");
+		builder.append(getCliente().getNome());
+		builder.append(" , Situacao Pagamento: ");
+		builder.append(getPagamento().getEstado().getDescricao());
+		builder.append("\n Detalhes \n");
+		for (ItemPedido ip : getItem()) {
+			builder.append(ip.toString());
+
+		}
+		builder.append("Valor Total: ");
+		builder.append(numeroFormatado.format(getValorTotal()));
+		return builder.toString();
 	}
 
 }
