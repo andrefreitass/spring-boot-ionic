@@ -53,6 +53,9 @@ public class ClienteService {
 	@Value("${img.prefix.client.profile}")
 	private String prefixo;
 
+	@Value("${img.profile.size}")
+	private Integer size;
+	
 	public Cliente find(Integer id) {
 		// Verificar se o ID que esta consultando e o mesmo do logado
 		Usuario usuario = UsuarioService.usuarioAutenticado();
@@ -156,9 +159,11 @@ public class ClienteService {
 			throw new AuthorizationException("Usuario nao encontrado, acesso negado");
 		}
 
-		BufferedImage jgpImage = imageService.getJpgImageFromFile(multiPartFile);
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multiPartFile);
+		jpgImage = imageService.cropSquare(jpgImage);
+		jpgImage = imageService.resize(jpgImage, size);
 		String nomeArquivo = prefixo + usuario.getId() + ".jpg";
-		return s3service.uploadFile(imageService.getInputStream(jgpImage, "jpg"), nomeArquivo, "image");
+		return s3service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), nomeArquivo, "image");
 
 	}
 
