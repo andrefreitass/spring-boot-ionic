@@ -1,9 +1,11 @@
 package com.andre.cursomc.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,24 +37,30 @@ public class ClienteService {
 
 	@Autowired
 	private CidadeRepository cidadeRespository;
-	
+
 	@Autowired
 	private EnderecoRepository enderecoRepository;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder senhaCriptografada;
-	
+
 	@Autowired
 	private S3Service s3service;
 
+	@Autowired
+	private ImageService imageService;
+
+	@Value("${img.prefix.client.profile}")
+	private String prefixo;
+
 	public Cliente find(Integer id) {
-		//Verificar se o ID que esta consultando e o mesmo do logado
+		// Verificar se o ID que esta consultando e o mesmo do logado
 		Usuario usuario = UsuarioService.usuarioAutenticado();
 		if (usuario == null || !usuario.buscaPerfilAcesso(PerfilAcesso.ADMIN) && !id.equals(usuario.getId())) {
 			throw new AuthorizationException("Acesso negado o cliente informado nao corresponde ao logado");
 		}
-		
-		//...........................................................
+
+		// ...........................................................
 		Cliente obj = repo.findOne(id);
 		if (obj == null) {
 			throw new ObjectNotFoundException("Cliente nao encontrado ID: " + id + ", Tipo " + Cliente.class.getName());
@@ -111,21 +119,21 @@ public class ClienteService {
 
 	// Converte DTO para Entity
 	public Cliente fromDTO(ClienteDTO objDTO) {
-		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null,null);
+		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null, null);
 	}
 
 	public Cliente fromDTO(ClienteNewDTO objDTO) {
 		Cliente cli = new Cliente(null, objDTO.getNome(), objDTO.getEmail(), objDTO.getCpfOuCnpj(),
 				TipoCliente.toEnum(objDTO.getTipo()), senhaCriptografada.encode(objDTO.getSenha()));
-		
+
 		Cidade cid = cidadeRespository.findOne(objDTO.getCidadeId());
-		
+
 		Endereco end = new Endereco(null, objDTO.getLogradouro(), objDTO.getNumero(), objDTO.getComplemento(),
-				objDTO.getBairro(), objDTO.getCep(), cli, cid); 
-		
+				objDTO.getBairro(), objDTO.getCep(), cli, cid);
+
 		cli.getEnderecos().add(end);
-		
-		cli.getTelefones().add(objDTO.getTelefone1());		
+
+		cli.getTelefones().add(objDTO.getTelefone1());
 		if (objDTO.getTelefone2() != null) {
 			cli.getTelefones().add(objDTO.getTelefone2());
 		}
@@ -139,20 +147,19 @@ public class ClienteService {
 		novoObjeto.setNome(obj.getNome());
 		novoObjeto.setEmail(obj.getEmail());
 	}
-	
-	//Metodo para Enviar a foto de perfil do usuario para AMAZON
-	//O Metodo pega o usuario logado, associa a imagem e salva no banco
+
+	// Metodo para Enviar a foto de perfil do usuario para AMAZON
+	// O Metodo pega o usuario logado, associa a imagem e salva no banco
 	public URI uploadProfilePicture(MultipartFile multiPartFile) {
 		Usuario usuario = UsuarioService.usuarioAutenticado();
 		if (usuario == null) {
-			throw new AuthorizationException("Usuario nao encontrado, acesso negado");			
+			throw new AuthorizationException("Usuario nao encontrado, acesso negado");
 		}
-		URI uri = s3service.uploadFile(multiPartFile);
-		Cliente cli = repo.findOne(usuario.getId());
-		cli.setImageURL(uri.toString());
-		repo.save(cli);
-		
-		return uri;
+
+		BufferedImage jgpImage = imageService.getJpgImageFromFile(multiPartFile);
+		String nomeArquivo = prefixo + usuario.getId() + ".jpg";
+		return s3service.uploadFile(imageService.getInputStream(jgpImage, "jpg"), nomeArquivo, "image");
+
 	}
 
 }
