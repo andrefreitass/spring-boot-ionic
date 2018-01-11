@@ -43,9 +43,10 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 	private static final String[] ACESSO_LIBERADO_CONSULTA = { 
 			"/produtos/**", "/categorias/**"};
 	
-	// Liberado apenas o post
+	// Liberado apenas o post - PUBLICO
 	private static final String[] ACESSO_LIBERADO_INSERIR = { 
-			"/clientes/**"};
+			"/clientes/**",
+			"/auth/forgot/**"};
 
 	// Coisas do frameWork
 	@Override
