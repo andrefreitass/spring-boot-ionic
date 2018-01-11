@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.andre.cursomc.security.JWTFiltroAutenticacao;
+import com.andre.cursomc.security.JWTFiltroAutorizacao;
 import com.andre.cursomc.security.JWTUtil;
 
 @Configuration
@@ -27,10 +28,10 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private Environment env;
-	
+
 	@Autowired
 	private UserDetailsService userDetailsService;
-	
+
 	@Autowired
 	private JWTUtil jwtUtil;
 
@@ -50,7 +51,10 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable();
 		http.authorizeRequests().antMatchers(HttpMethod.GET, ACESSO_LIBERADO_CONSULTA).permitAll()
 				.antMatchers(ACESSO_LIBERADO).permitAll().anyRequest().authenticated();
+		// Cria Filtro de Autenticacao
 		http.addFilter(new JWTFiltroAutenticacao(authenticationManager(), jwtUtil));
+		// Cria Filtro de Autorizacao
+		http.addFilter(new JWTFiltroAutorizacao(authenticationManager(), jwtUtil, userDetailsService));
 		// esse metodo garante que o back end nao cria sessao de usuario
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -69,12 +73,11 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 	public BCryptPasswordEncoder criptografaSenha() {
 		return new BCryptPasswordEncoder();
 	}
-	
+
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(criptografaSenha());
-		
+
 	}
-	
 
 }
