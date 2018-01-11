@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.andre.cursomc.domain.Cliente;
@@ -24,7 +25,7 @@ import com.andre.cursomc.dto.ClienteNewDTO;
 import com.andre.cursomc.services.ClienteService;
 
 @RestController
-@RequestMapping(value = "/clientes")	
+@RequestMapping(value = "/clientes")
 public class ClienteResource {
 
 	@Autowired
@@ -35,7 +36,7 @@ public class ClienteResource {
 		Cliente obj = service.find(id);
 		return ResponseEntity.ok().body(obj);
 
-	}	
+	}
 
 	// Post Insercao
 	@RequestMapping(method = RequestMethod.POST)
@@ -47,8 +48,7 @@ public class ClienteResource {
 
 	}
 
-
-	// PUT Alteracao	
+	// PUT Alteracao
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody ClienteDTO objDTO, @PathVariable Integer id) {
 		Cliente obj = service.fromDTO(objDTO);
@@ -58,7 +58,7 @@ public class ClienteResource {
 	}
 
 	// Delete Exclusao
-	@PreAuthorize("hasAnyRole('ADMINISTRADOR')")//Apenas ADMIN pode usar este ENDPOINT
+	@PreAuthorize("hasAnyRole('ADMINISTRADOR')") // Apenas ADMIN pode usar este ENDPOINT
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Integer id) {
 		service.delete(id);
@@ -67,7 +67,7 @@ public class ClienteResource {
 	}
 
 	// Get Consulta TODOS
-	@PreAuthorize("hasAnyRole('ADMINISTRADOR')")//Apenas ADMIN pode usar este ENDPOINT
+	@PreAuthorize("hasAnyRole('ADMINISTRADOR')") // Apenas ADMIN pode usar este ENDPOINT
 	@RequestMapping(method = RequestMethod.GET)
 	public ResponseEntity<List<ClienteDTO>> findAll() {
 		List<Cliente> list = service.findAll();
@@ -76,7 +76,7 @@ public class ClienteResource {
 	}
 
 	// Get Consulta TODOS Paginado
-	@PreAuthorize("hasAnyRole('ADMINISTRADOR')")//Apenas ADMIN pode usar este ENDPOINT
+	@PreAuthorize("hasAnyRole('ADMINISTRADOR')") // Apenas ADMIN pode usar este ENDPOINT
 	@RequestMapping(value = "/page", method = RequestMethod.GET)
 	public ResponseEntity<Page<ClienteDTO>> findPage(@RequestParam(value = "page", defaultValue = "0") Integer page,
 			@RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
@@ -87,4 +87,14 @@ public class ClienteResource {
 		return ResponseEntity.ok().body(listaDTO);
 
 	}
+
+	// END POINT para envio de foto de perfil para Amazon
+	// Post Insercao
+	@RequestMapping(value = "/picture",method = RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile file) {
+		URI uri = service.uploadProfilePicture(file);		
+		return ResponseEntity.created(uri).build();
+
+	}
+
 }
