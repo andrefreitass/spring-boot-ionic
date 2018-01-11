@@ -141,8 +141,18 @@ public class ClienteService {
 	}
 	
 	//Metodo para Enviar a foto de perfil do usuario para AMAZON
+	//O Metodo pega o usuario logado, associa a imagem e salva no banco
 	public URI uploadProfilePicture(MultipartFile multiPartFile) {
-		return s3service.uploadFile(multiPartFile);
+		Usuario usuario = UsuarioService.usuarioAutenticado();
+		if (usuario == null) {
+			throw new AuthorizationException("Usuario nao encontrado, acesso negado");			
+		}
+		URI uri = s3service.uploadFile(multiPartFile);
+		Cliente cli = repo.findOne(usuario.getId());
+		cli.setImageURL(uri.toString());
+		repo.save(cli);
+		
+		return uri;
 	}
 
 }

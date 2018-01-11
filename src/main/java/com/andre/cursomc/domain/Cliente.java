@@ -64,6 +64,9 @@ public class Cliente implements Serializable {
 	public Cliente () {		
 		addPerfil(PerfilAcesso.CLIENTE);
 	}
+	
+	
+	private String imageURL;
 
 	public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo,String senha) {
 		super();
@@ -158,6 +161,14 @@ public class Cliente implements Serializable {
 	public void addPerfil(PerfilAcesso perfil) {
 		perfis.add(perfil.getCodigo());
 	}
+	
+	public String getImageURL() {
+		return imageURL;
+	}
+
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
 
 	@Override
 	public int hashCode() {
@@ -183,5 +194,4 @@ public class Cliente implements Serializable {
 			return false;
 		return true;
 	}
-
 }
