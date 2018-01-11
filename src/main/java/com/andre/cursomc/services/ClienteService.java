@@ -13,12 +13,15 @@ import org.springframework.stereotype.Service;
 import com.andre.cursomc.domain.Cidade;
 import com.andre.cursomc.domain.Cliente;
 import com.andre.cursomc.domain.Endereco;
+import com.andre.cursomc.domain.enums.PerfilAcesso;
 import com.andre.cursomc.domain.enums.TipoCliente;
 import com.andre.cursomc.dto.ClienteDTO;
 import com.andre.cursomc.dto.ClienteNewDTO;
 import com.andre.cursomc.repositories.CidadeRepository;
 import com.andre.cursomc.repositories.ClienteRepository;
 import com.andre.cursomc.repositories.EnderecoRepository;
+import com.andre.cursomc.security.Usuario;
+import com.andre.cursomc.services.exception.AuthorizationException;
 import com.andre.cursomc.services.exception.DataIntegrityException;
 import com.andre.cursomc.services.exception.ObjectNotFoundException;
 
@@ -38,6 +41,13 @@ public class ClienteService {
 	private BCryptPasswordEncoder senhaCriptografada;
 
 	public Cliente find(Integer id) {
+		//Verificar se o ID que esta consultando e o mesmo do logado
+		Usuario usuario = UsuarioService.usuarioAutenticado();
+		if (usuario == null || !usuario.buscaPerfilAcesso(PerfilAcesso.ADMIN) && !id.equals(usuario.getId())) {
+			throw new AuthorizationException("Acesso negado o cliente informado nao corresponde ao logado");
+		}
+		
+		//...........................................................
 		Cliente obj = repo.findOne(id);
 		if (obj == null) {
 			throw new ObjectNotFoundException("Cliente nao encontrado ID: " + id + ", Tipo " + Cliente.class.getName());

@@ -72,5 +72,10 @@ public class Usuario implements UserDetails {
 		// TODO Auto-generated method stub
 		return true;
 	}
+	
+	public Boolean buscaPerfilAcesso(PerfilAcesso perfilAcesso) {
+		return getAuthorities().contains(new SimpleGrantedAuthority(perfilAcesso.getDescricao()));
+		
+	}
 
 }
