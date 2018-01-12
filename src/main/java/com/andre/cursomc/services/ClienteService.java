@@ -112,6 +112,20 @@ public class ClienteService {
 		}
 
 	}
+	
+	//metodo para buscar cliente pro Email
+	public Cliente buscaEmail(String email) {
+		Usuario usuario = UsuarioService.usuarioAutenticado();
+		if(usuario == null || !usuario.buscaPerfilAcesso(PerfilAcesso.ADMIN) && !email.equals(usuario.getUsername())) {
+			throw new AuthorizationException("Acesso Negado, usuario nao encontrado");
+		}
+		
+		Cliente cliente = repo.findOne(usuario.getId());
+		if (usuario == null) {
+			throw new ObjectNotFoundException("Cliente Nao Encontrado! Id: " + usuario.getId() + ", Tipo: " + Cliente.class.getName());
+			}
+		return cliente;
+	}
 
 	// Metodo para paginacao
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {

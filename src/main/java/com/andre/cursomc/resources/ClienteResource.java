@@ -90,11 +90,18 @@ public class ClienteResource {
 
 	// END POINT para envio de foto de perfil para Amazon
 	// Post Insercao
-	@RequestMapping(value = "/picture",method = RequestMethod.POST)
-	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name="file") MultipartFile file) {
-		URI uri = service.uploadProfilePicture(file);		
+	@RequestMapping(value = "/picture", method = RequestMethod.POST)
+	public ResponseEntity<Void> uploadProfilePicture(@RequestParam(name = "file") MultipartFile file) {
+		URI uri = service.uploadProfilePicture(file);
 		return ResponseEntity.created(uri).build();
 
 	}
 
+	// End Point para Buscar por Email
+	@RequestMapping(value = "/email", method = RequestMethod.GET)
+	public ResponseEntity<ClienteDTO> buscaEmail(@RequestParam(value = "email") String email) {
+		Cliente cliente = service.buscaEmail(email);
+		return ResponseEntity.ok().body(new ClienteDTO(cliente));
+
+	}
 }
