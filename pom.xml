@@ -85,9 +85,7 @@
 			<version>LATEST</version>
 		</dependency>
 
-
 	</dependencies>
-
 
 	<build>
 		<plugins>
