@@ -41,7 +41,7 @@ public class SegurancaConfig extends WebSecurityConfigurerAdapter {
 
 	// caminho apenas de leitura
 	private static final String[] ACESSO_LIBERADO_CONSULTA = { 
-			"/produtos/**", "/categorias/**"};
+			"/produtos/**", "/categorias/**","/estados/**"};
 	
 	// Liberado apenas o post - PUBLICO
 	private static final String[] ACESSO_LIBERADO_INSERIR = { 
