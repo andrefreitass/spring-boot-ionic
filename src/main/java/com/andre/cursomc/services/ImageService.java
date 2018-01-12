@@ -10,6 +10,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FilenameUtils;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,13 +59,12 @@ public class ImageService {
 	// Recorta a imagem
 	public BufferedImage cropSquare(BufferedImage sourceImg) {
 		int min = (sourceImg.getHeight() <= sourceImg.getWidth()) ? sourceImg.getHeight() : sourceImg.getWidth();
-		return null;
-//				Scalr.crop(sourceImg, (sourceImg.getWidth() / 2) - (min / 2), (sourceImg.getHeight() / 2) - (min / 2),
-//				min, min);
+		return	Scalr.crop(sourceImg, (sourceImg.getWidth() / 2) - (min / 2), (sourceImg.getHeight() / 2) - (min / 2),
+				min, min);
 	}
 
 	public BufferedImage resize(BufferedImage sourceImg, int size) {
-		return null; /*Scalr.resize(sourceImg, Scalr.Method.ULTRA_QUALITY, size);*/
+		return  Scalr.resize(sourceImg, Scalr.Method.ULTRA_QUALITY, size);
 	}
 
 }
